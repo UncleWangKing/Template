@@ -18,9 +18,10 @@ public class PathUtil {
     public static void main(String[] args){
         System.out.println(System.getProperty("user.dir"));
         String osName = System.getProperties().getProperty("os.name");
-        if(osName.equals("Linux"))
+        if(osName.equals("Linux")) {
             System.out.println("running in Linux");
-        else
+        } else {
             System.out.println("don't running in Linux");
+        }
     }
 }
