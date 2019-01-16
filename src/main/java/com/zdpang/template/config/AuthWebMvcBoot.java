@@ -1,13 +1,16 @@
 package com.zdpang.template.config;
 
+import com.zdpang.template.interceptor.AuthWebRequestInterceptor;
 import com.zdpang.template.util.PathUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
@@ -19,6 +22,16 @@ import javax.servlet.MultipartConfigElement;
 public class AuthWebMvcBoot extends WebMvcConfigurationSupport {
     @Value("${env.config.oss.path}")
     private String ossPath;
+
+    @Autowired
+    private AuthWebRequestInterceptor authWebRequestInterceptor;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        super.addInterceptors(registry);
+        registry.addInterceptor(authWebRequestInterceptor);
+    }
+
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
