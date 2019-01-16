@@ -1,6 +1,7 @@
 package com.zdpang.template.controller;
 
 import com.zdpang.template.bean.ResponseBean;
+import com.zdpang.template.exception.BaseException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
