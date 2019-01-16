@@ -9,7 +9,7 @@ public class PathUtil {
     public static String getJarPath(){
         String osName = System.getProperties().getProperty("os.name");
         if(osName.equals("Linux")){
-            return System.getProperty("java.class.path").replace("/env.jar", "");
+            return System.getProperty("java.class.path").replace("/template.jar", "");
         }else {
             return System.getProperty("user.dir");
         }

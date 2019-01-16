@@ -101,7 +101,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>env</finalName>
+		<finalName>template</finalName>
 		<plugins>
 			<plugin>
 				<!-- The plugin rewrites your manifest -->
