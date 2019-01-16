@@ -12,5 +12,5 @@ import com.zdpang.template.model.SysUser;
  * @since 2019-01-16
  */
 public interface SysUserService extends IService<SysUser> {
-
+    SysUser sqlAttackTest(String id);
 }
