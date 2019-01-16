@@ -1,7 +1,7 @@
 package com.zdpang.template.service;
 
-import com.zdpang.template.model.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zdpang.template.model.SysUser;
 
 /**
  * <p>

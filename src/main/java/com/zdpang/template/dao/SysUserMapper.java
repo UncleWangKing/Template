@@ -1,7 +1,7 @@
 package com.zdpang.template.dao;
 
-import com.zdpang.template.model.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zdpang.template.model.SysUser;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

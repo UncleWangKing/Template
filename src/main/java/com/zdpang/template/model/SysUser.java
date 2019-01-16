@@ -1,24 +1,23 @@
 package com.zdpang.template.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import java.time.LocalDate;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
  * 
  * </p>
  *
- * @author Gumh
- * @since 2019-01-16
+ * @author liuwang
+ * @since 2018-11-15
  */
 @TableName("sys_user")
 @Data
@@ -27,8 +26,8 @@ public class SysUser extends Model<SysUser> {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    @TableId(value = "id", type = IdType.UUID)
+    private String id;
 
     private String username;
 
@@ -36,85 +35,60 @@ public class SysUser extends Model<SysUser> {
 
     private String nickname;
 
-    private Boolean gender;
+    private Integer gender;
 
-    @TableField("phoneNumber")
-    private String phoneNumber;
+    private String phonenumber;
 
-    @TableField("cellphoneNumber")
-    private String cellphoneNumber;
+    private String cellphonenumber;
 
     private String email;
 
-    @TableField("weChat")
-    private String weChat;
+    private String wechat;
 
     private String qq;
 
-    @TableField("imageUrl")
-    private String imageUrl;
+    private String imageurl;
 
-    @TableField("employeeNumber")
-    private String employeeNumber;
+    private String employeenumber;
 
-    @TableField("birthDay")
-    private LocalDate birthDay;
+    private Date birthday;
 
-    private Long manager;
-
-    private Boolean enable;
+    private Integer enable;
 
     private String description;
 
-    private Long organization;
+    private String organization;
 
-    private Long department;
+    @TableField(exist = false)
+    private String organizationName;
 
-    private Long station;
+    private String department;
 
-    private Long job;
+    @TableField(exist = false)
+    private String departmentName;
 
-    @TableField("userGroup")
-    private Long userGroup;
+    private String job;
+
+    @TableField(exist = false)
+    private String jobName;
 
     private String remark;
 
-    @TableField("backUserID")
-    private String backUserID;
+    private String address;
 
-    @TableField("backFixedLine")
-    private String backFixedLine;
+    private Date createtime;
 
-    @TableField("backAddress")
-    private String backAddress;
+    private Date lastlogintime;
 
-    @TableField("backDeptIDs")
-    private String backDeptIDs;
+    private String manager;
 
-    @TableField("backPsIDs")
-    private String backPsIDs;
+    @TableField(exist = false)
+    private String managerName;
 
-    @TableField("backRoleIDs")
-    private String backRoleIDs;
-
-    @TableField("backCreateTime")
-    private LocalDateTime backCreateTime;
-
-    @TableField("backLastLoginTime")
-    private LocalDateTime backLastLoginTime;
-
-    @TableField("backLoginCount")
-    private Long backLoginCount;
-
-    @TableField("backUserStateId")
-    private Boolean backUserStateId;
-
-    @TableField("backUserImageID")
-    private Long backUserImageID;
-
+    private String extra;
 
     @Override
     protected Serializable pkVal() {
         return this.id;
     }
-}
+ }
