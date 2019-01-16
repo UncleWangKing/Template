@@ -25,7 +25,7 @@ public class MpGenerator {
         .setBaseColumnList(false)// XML columList
         .setIdType(IdType.UUID)
         .setServiceName("%sService")
-        .setAuthor("Gumh");
+        .setAuthor("zdpang");
         mpg.setGlobalConfig(gc);
 
         // 数据源配置
