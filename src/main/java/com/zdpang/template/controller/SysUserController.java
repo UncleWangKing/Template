@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  *  前端控制器
  * </p>
  *
- * @author Gumh
+ * @author ZhangDaPang 285296372@qq.com
  * @since 2019-01-16
  */
 @RestController

@@ -8,7 +8,7 @@ import com.zdpang.template.model.SysUser;
  *  服务类
  * </p>
  *
- * @author Gumh
+ * @author ZhangDaPang 285296372@qq.com
  * @since 2019-01-16
  */
 public interface SysUserService extends IService<SysUser> {
