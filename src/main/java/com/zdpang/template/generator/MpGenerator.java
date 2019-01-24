@@ -44,7 +44,7 @@ public class MpGenerator {
         /**
          * 只需修改表名
          */
-        .setInclude(new String[] { "sys_user" }); // 需要生成的表
+        .setInclude(new String[] { "goods_info" }); // 需要生成的表
         mpg.setStrategy(strategy);
 
         // 包配置

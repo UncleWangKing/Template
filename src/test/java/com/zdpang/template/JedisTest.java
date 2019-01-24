@@ -20,7 +20,7 @@ public class JedisTest {
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxIdle(8);
         config.setMaxTotal(18);
-        JedisPool pool = new JedisPool(config, "39.105.109.109", 6379, 2000, "root");
+        JedisPool pool = new JedisPool(config, "39.105.109.109", 7000, 2000);
         Jedis jedis = pool.getResource();
         System.out.println(jedis.get("lw"));
         jedis.close();
