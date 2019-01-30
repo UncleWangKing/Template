@@ -35,6 +35,12 @@ public class Customer {
                                        AMQP.BasicProperties properties, byte[] body)
                     throws IOException {
                 String message = new String(body, "UTF-8");
+                if(SingletonMap.self.map.containsKey(message)){
+                    System.out.println("dup message:" + message);
+                }else {
+                    SingletonMap.self.map.put(message, null);
+                }
+                if(0 == Integer.valueOf(message) % 1000)
                 System.out.println("Customer Received '" + message + "'");
             }
         };

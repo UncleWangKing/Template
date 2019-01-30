@@ -29,10 +29,12 @@ public class Producer {
         // 声明一个队列
         channel.queueDeclare(QUEUE_NAME, false, false, false, null);
 
-        //发送消息到队列中
-        String message = "hayaku";
-        channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"));
-        System.out.println("Producer Send +'" + message + "'");
+        for (int i = 1; i < 10000; i++) {
+            //发送消息到队列中
+            String message = "" + i;
+            channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"));
+            System.out.println("Producer Send +'" + message + "'");
+        }
 
         //关闭通道和连接
         channel.close();
