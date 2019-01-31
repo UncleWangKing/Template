@@ -1,7 +1,8 @@
 package com.zdpang.template.controller;
 
+import com.keepang.springviewer.SpringViewerContext;
 import com.zdpang.template.bean.ResponseBean;
-import com.zdpang.template.exception.BaseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,9 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2019/1/16 15:16
  */
 @RestController
-public class HelloController {
+public class SpringViewerController {
+    @Autowired
+    private SpringViewerContext springViewerContext;
+
     @GetMapping("/hellow")
     public ResponseBean getPatrolInfoByDate() {
-        return new ResponseBean().success();
+        return new ResponseBean().success(springViewerContext.wrap("haha"));
     }
 }

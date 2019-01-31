@@ -17,9 +17,10 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.9</java.version>
+		<java.version>1.8</java.version>
 		<jsoup.version>1.10.3</jsoup.version>
 		<lang3.version>3.6</lang3.version>
+		<springviwer.path>C:\workspace\softboot\idea\work\SpringViewer\target\springviewer-starter-0.0.1-SNAPSHOT.jar</springviwer.path>
 	</properties>
 
 	<dependencies>
@@ -134,6 +135,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.keepang</groupId>
+			<artifactId>springviewer-starter</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${springviwer.path}</systemPath>
 		</dependency>
 	</dependencies>
 
