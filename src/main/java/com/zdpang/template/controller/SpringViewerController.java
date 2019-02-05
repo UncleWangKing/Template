@@ -1,6 +1,6 @@
 package com.zdpang.template.controller;
 
-import com.keepang.springviewer.SpringViewerContext;
+import com.zdpang.springviewer.context.SpringViewerContext;
 import com.zdpang.template.bean.ResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +15,8 @@ public class SpringViewerController {
     @Autowired
     private SpringViewerContext springViewerContext;
 
-    @GetMapping("/hellow")
+    @GetMapping("/springviewer")
     public ResponseBean getPatrolInfoByDate() {
-        return new ResponseBean().success(springViewerContext.wrap("haha"));
+        return new ResponseBean().success(springViewerContext.getControllerClassBeans());
     }
 }
