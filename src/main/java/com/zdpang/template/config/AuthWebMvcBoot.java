@@ -20,7 +20,7 @@ import javax.servlet.MultipartConfigElement;
 @ConfigurationProperties(prefix = "com.zdpang.template.config")
 @Slf4j
 public class AuthWebMvcBoot extends WebMvcConfigurationSupport {
-    @Value("${env.config.oss.path}")
+    @Value("${com.zdpang.config.oss.path}")
     private String ossPath;
 
     @Autowired

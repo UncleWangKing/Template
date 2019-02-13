@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-@ConfigurationProperties(prefix = "com.env.config.auth")
+@ConfigurationProperties(prefix = "com.zdpang.config.auth")
 public class AuthWebRequestInterceptor implements HandlerInterceptor {
     /**
      * 放着备用
