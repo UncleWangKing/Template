@@ -1,13 +1,13 @@
 package com.zdpang.template.executor;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class Test {
      public static void main(String[] args) {   
          ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 10, 200, TimeUnit.MILLISECONDS,
-                 new LinkedBlockingQueue<>());
+                 new ArrayBlockingQueue<>(5));
           
          for(int i = 0; i < 20; i++){
              MyTask myTask = new MyTask(i);
