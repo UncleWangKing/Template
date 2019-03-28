@@ -17,7 +17,7 @@ import java.util.Map;
 @Configuration
 public class DruidConfig {
 
-    @ConfigurationProperties(prefix = "sharding.jdbc.datasource.ds_master")
+    @ConfigurationProperties(prefix = "spring.datasource")
     @Bean
     public DataSource druid(){
        return  new DruidDataSource();

@@ -33,8 +33,8 @@ public class MpGenerator {
         dsc.setDbType(DbType.MYSQL);
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("wads1314");
-        dsc.setUrl("jdbc:mysql://39.105.109.109:3306/env?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+        dsc.setPassword("root");
+        dsc.setUrl("jdbc:mysql://localhost:3306/demos?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
         mpg.setDataSource(dsc);
 
         // 策略配置
@@ -44,7 +44,7 @@ public class MpGenerator {
         /**
          * 只需修改表名
          */
-        .setInclude(new String[] { "goods_info" }); // 需要生成的表
+        .setInclude(new String[] { "ac_member_org" }); // 需要生成的表
         mpg.setStrategy(strategy);
 
         // 包配置

@@ -33,60 +33,6 @@ public class SysUser extends Model<SysUser> {
 
     private String password;
 
-    private String nickname;
-
-    private Integer gender;
-
-    private String phonenumber;
-
-    private String cellphonenumber;
-
-    private String email;
-
-    private String wechat;
-
-    private String qq;
-
-    private String imageurl;
-
-    private String employeenumber;
-
-    private Date birthday;
-
-    private Integer enable;
-
-    private String description;
-
-    private String organization;
-
-    @TableField(exist = false)
-    private String organizationName;
-
-    private String department;
-
-    @TableField(exist = false)
-    private String departmentName;
-
-    private String job;
-
-    @TableField(exist = false)
-    private String jobName;
-
-    private String remark;
-
-    private String address;
-
-    private Date createtime;
-
-    private Date lastlogintime;
-
-    private String manager;
-
-    @TableField(exist = false)
-    private String managerName;
-
-    private String extra;
-
     @Override
     protected Serializable pkVal() {
         return this.id;

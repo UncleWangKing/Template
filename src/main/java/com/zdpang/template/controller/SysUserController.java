@@ -34,5 +34,11 @@ public class SysUserController implements CrudController<SysUser, SysUserService
 
         return new ResponseBean().success(sysUserService.sqlAttackTest(id));
     }
+
+    @GetMapping(value="/stuff")
+    ResponseBean stuff() throws Exception {
+
+        return new ResponseBean().success(sysUserService.list(null));
+    }
 }
 
