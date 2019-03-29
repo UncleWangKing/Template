@@ -8,7 +8,7 @@ import java.util.*;
  * @author ZhangDaPang 285296372@qq.com
  * @date 2019/3/12 16:29
  */
-public class TopologicalSortUtil<T> {
+public class TopologicalSortUtil<T, K extends Comparable> {
     /**
      * 拓扑排序
      * @param list 集合
@@ -29,17 +29,17 @@ public class TopologicalSortUtil<T> {
         Class<?> clazz = list.get(0).getClass();
         Method getSelfIdMethod = clazz.getMethod("get" + idField.substring(0, 1).toUpperCase() + idField.substring(1));
         Method getParentIdMethod = clazz.getMethod("get" + parentIdField.substring(0, 1).toUpperCase() + parentIdField.substring(1));
-        Map<String, Integer> nodeIndexMap = new HashMap<>();
+        Map<K, Integer> nodeIndexMap = new HashMap<>();
         int relationCount = 0;
         /**
          * 生成id与下标对应的map 用于下方转换成下标数组关系使用
          * 通常list为mybatis查询出的结合 是ArrayList get效率高
          */
         for (int index = 0; index < list.size(); index++) {
-            String parentId = (String)getParentIdMethod.invoke(list.get(index));
-            String id = (String)getSelfIdMethod.invoke(list.get(index));
+            K parentId = (K)getParentIdMethod.invoke(list.get(index));
+            K id = (K)getSelfIdMethod.invoke(list.get(index));
             nodeIndexMap.put(id, index);
-            if(null != parentId && !"".equals(parentId.replace(" ", ""))){
+            if(null != parentId){
                 relationCount++;
             }
         }
@@ -49,11 +49,13 @@ public class TopologicalSortUtil<T> {
         int [][] parentList = new int[relationCount][];
         int index = 0;
         for (Object node : list) {
-            if(null != getParentIdMethod.invoke(node) && !"".equals(((String)getParentIdMethod.invoke(node)).replace(" ",""))){
+            if(null != getParentIdMethod.invoke(node)){
                 int[] parent = new int[2];
-                String id = (String)getSelfIdMethod.invoke(node);
-                String parentId = (String)getParentIdMethod.invoke(node);
+                K id = (K)getSelfIdMethod.invoke(node);
+                K parentId = (K)getParentIdMethod.invoke(node);
                 parent[0] = nodeIndexMap.get(id);
+                if(null == nodeIndexMap.get(parentId))
+                    throw new RuntimeException("无效的parentId:" + parentId);
                 parent[1] = nodeIndexMap.get(parentId);
                 parentList[index++] = parent;
             }

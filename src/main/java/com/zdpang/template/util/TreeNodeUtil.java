@@ -11,7 +11,7 @@ import java.util.Map;
  * @author ZhangDaPang 285296372@qq.com
  * @date 2019/3/12 16:49
  */
-public class TreeNodeUtil<T> {
+public class TreeNodeUtil<T, K extends Comparable> {
     private static final String DATA_FIELD = "data";
     private static final String CHILDREN_FIELD = "children";
     /**
@@ -29,7 +29,7 @@ public class TreeNodeUtil<T> {
         if(null == list || 0 == list.size())
             return resultList;
 
-        int[] indexList = new TopologicalSortUtil<T>().ringCheck(list, idField, parentIdField);
+        int[] indexList = new TopologicalSortUtil<T, K>().ringCheck(list, idField, parentIdField);
         /**
          * 空结果或者成环 上方判断了空结果这里只可能是成环
          */
@@ -45,13 +45,13 @@ public class TreeNodeUtil<T> {
         /**
          * 先将parent字段为空的节点放入最终树型集合
          */
-        Map<String, Map<String, Object>> map = new HashMap<>();
+        Map<K, Map<String, Object>> map = new HashMap<>();
         for (T node : list) {
-            if (null == getParentIdMethod.invoke(node) || "".equals(((String)getParentIdMethod.invoke(node)).replace(" ", ""))) {
+            if (null == getParentIdMethod.invoke(node)) {
                 Map<String, Object> nodeMap = new HashMap<>();
                 nodeMap.put(DATA_FIELD, node);
                 resultList.add(nodeMap);
-                map.put((String) getSelfIdMethod.invoke(node), nodeMap);
+                map.put((K) getSelfIdMethod.invoke(node), nodeMap);
             }
         }
         /**
@@ -59,8 +59,8 @@ public class TreeNodeUtil<T> {
          */
         for (int i = 0; i < indexList.length; ++i) {
             T node = list.get(indexList[i]);
-            String parentId = (String)getParentIdMethod.invoke(node);
-            if(null == parentId || "".equals(parentId.replace(" ", ""))) {
+            K parentId = (K)getParentIdMethod.invoke(node);
+            if(null == parentId) {
                 continue;
             }
             Map<String, Object> root = map.get(getParentIdMethod.invoke(node));
@@ -71,7 +71,7 @@ public class TreeNodeUtil<T> {
             child.put(DATA_FIELD, node);
             List<Object> children = (List<Object>)root.get(CHILDREN_FIELD);
             children.add(child);
-            map.put((String)getSelfIdMethod.invoke(node), child);
+            map.put((K)getSelfIdMethod.invoke(node), child);
         }
 
         return resultList;

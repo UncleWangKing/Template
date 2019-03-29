@@ -36,7 +36,7 @@ public class AcMemberOrgController {
                 ac.setParentId("");
             }
         }
-        return new ResponseBean().success(new TreeNodeUtil<AcMemberOrg>().generateTree(list, "orgId", "parentId"));
+        return new ResponseBean().success(new TreeNodeUtil<AcMemberOrg, String>().generateTree(list, "orgId", "parentId"));
     }
 }
 
