@@ -7,6 +7,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zdpang.template.bean.FieldValuePair;
 import com.zdpang.template.bean.ResponseBean;
+import com.zdpang.template.model.MessageQueue;
+import java.util.Date;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +46,10 @@ public interface CrudController<T extends Model, K extends IService> {
     default ResponseBean insert(@Valid @RequestBody T obj, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return new ResponseBean().failure(bindingResult.getFieldError().getDefaultMessage());
+        }
+
+        if (obj instanceof MessageQueue){
+            ((MessageQueue) obj).setExpireTime(new Date());
         }
 
         return getService().save(obj) ?  new ResponseBean().success(obj) : new ResponseBean().failure("保存失败");

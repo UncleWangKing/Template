@@ -23,7 +23,7 @@ public class MpGenerator {
         .setEnableCache(false)// XML 二级缓存
         .setBaseResultMap(true)// XML ResultMap
         .setBaseColumnList(false)// XML columList
-        .setIdType(IdType.UUID)
+        .setIdType(IdType.AUTO)
         .setServiceName("%sService")
         .setAuthor("zdpang");
         mpg.setGlobalConfig(gc);
@@ -44,7 +44,7 @@ public class MpGenerator {
         /**
          * 只需修改表名
          */
-        .setInclude("message_payload"); // 需要生成的表
+        .setInclude("message_queue"); // 需要生成的表
         mpg.setStrategy(strategy);
 
         // 包配置
