@@ -6,12 +6,12 @@ import com.zdpang.template.model.MessageBroadcast;
 import com.zdpang.template.model.MessagePayload;
 import com.zdpang.template.model.MessageQueue;
 import com.zdpang.template.model.MessageUser;
-import com.zdpang.template.util.Constants;
 import com.zdpang.template.util.Constants.MessageType;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,8 +52,8 @@ public class MessageService {
     Iterator<MessageQueue> iterator = messageQueueList.iterator();
     while (iterator.hasNext()){
       MessageQueue item = iterator.next();
-      if(item.getMessageType().equals(MessageType.BROAD_CAST)){
-        messageBroadcastList.add(MessageBroadcast.messageQueu2MessageBroadCast(item));
+      if(item.getMessageType().equals(MessageType.BROAD_CAST.getVal())){
+        messageBroadcastList.add(MessageBroadcast.messageQueue2MessageBroadCast(item));
         iterator.remove();
       }
     }
@@ -66,27 +66,62 @@ public class MessageService {
       messageBroadcastService.saveBatch(messageBroadcastList);
     }
 
+    return true;
+  }
+
+  public List<MessageQueue> getMessage(Long userId, String brand, Long clientId, Integer pageSize, Integer pageNum){
     /**
-     * 用户增量添加 -- 放在读取上去
+     * 读取用户广播拆分情况
      */
-
-    if(! CollectionUtils.isEmpty(messageQueueList)) {
-
-      Set<Long> userIdSet = new HashSet<>();
-      for (MessageQueue messageQueue:messageQueueList) {
-        userIdSet.add(messageQueue.getTargetUserId());
-      }
-      QueryWrapper<MessageUser> messageUserQueryWrapper = new QueryWrapper<>();
-      messageUserQueryWrapper.select("user_id").in("user_id", userIdSet);
-      List<MessageUser> messageOldUserList = messageUserService.list(messageUserQueryWrapper);
-
-      Iterator<Long> userIdIterator = userIdSet.iterator();
-      while (userIdIterator.hasNext()){
-        Long next = userIdIterator.next();
-
-      }
+    QueryWrapper<MessageUser> messageUserQueryWrapper = new QueryWrapper<>();
+    messageUserQueryWrapper.eq("user_id", userId);
+    MessageUser one = messageUserService.getOne(messageUserQueryWrapper);
+    if(null == one){
+      one = MessageUser.generateMessageUser(userId);
+    }
+    /**
+     * 广播拆分
+     */
+    QueryWrapper<MessageBroadcast> maxSeqWrapper = new QueryWrapper<>();
+    maxSeqWrapper.select("MAX(seq) as maxSeq").eq("brand", brand);
+    Map<String, Object> map = messageBroadcastService.getMap(maxSeqWrapper);
+    Long maxSeq = (Long) map.get("maxSeq");
+    if(null != maxSeq && maxSeq > one.getSplitSeq()){
+      QueryWrapper<MessageBroadcast> broadcastQueryWrapper = new QueryWrapper<>();
+      broadcastQueryWrapper.gt("seq", one.getSplitSeq());
+      List<MessageBroadcast> broadCastList = messageBroadcastService.list(broadcastQueryWrapper);
+      List<MessageQueue> messageQueueList = MessageQueue.messageBroadCast2MessageQueue(broadCastList, userId);
+      messageQueueService.saveBatch(messageQueueList);
+      one.setSplitSeq(maxSeq);
+      messageUserService.saveOrUpdate(one);
     }
 
-    return true;
+    /**
+     * 消息读取
+     */
+    QueryWrapper<MessageQueue> messageQueueQueryWrapper = new QueryWrapper<>();
+    messageQueueQueryWrapper.eq("target_user_id", userId).eq("brand", brand).ge("expire_time", new Date()).orderByDesc("seq");
+    List<MessageQueue> messageQueueList = messageQueueService.list(messageQueueQueryWrapper);
+
+    if(! CollectionUtils.isEmpty(messageQueueList)) {
+      List<Long> payLoadIdList = new ArrayList<>();
+      for (MessageQueue messageQueue:messageQueueList) {
+        payLoadIdList.add(messageQueue.getSeq());
+      }
+      QueryWrapper<MessagePayload> payloadQueryWrapper = new QueryWrapper<>();
+      payloadQueryWrapper.in("id", payLoadIdList);
+      List<MessagePayload> payloadList = messagePayloadService.list(payloadQueryWrapper);
+
+      for (MessageQueue messageQueue:messageQueueList) {
+        for (MessagePayload payload:payloadList) {
+          if(payload.getId().equals(messageQueue.getSeq())){
+            messageQueue.setPayLoad(payload.getPayload());
+            break;
+          }
+        }
+      }
+
+    }
+    return messageQueueList;
   }
 }

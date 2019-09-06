@@ -1,6 +1,7 @@
 package com.zdpang.template.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -71,12 +72,11 @@ public class MessageQueue extends Model<MessageQueue> {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",locale = "zh", timezone="GMT+8")
     private Date expireTime;
-    /**
-     * 消息体
-     */
-    private Long payloadId;
 
     private Long seq;
+
+    @TableField(exist = false)
+    private String payLoad;
 
 
     @Override
@@ -100,6 +100,26 @@ public class MessageQueue extends Model<MessageQueue> {
 
     public static List<MessageQueue> messageVo2MessageQueue(List<MessageVo> messageVoList){
         return messageVoList.stream().map(MessageQueue::messageVo2MessageQueue).collect(
+            Collectors.toList());
+    }
+
+    public static MessageQueue messageBroadCast2MessageQueue(MessageBroadcast messageBroadcast, Long targetUserId){
+        MessageQueue messageQueue = new MessageQueue();
+        messageQueue.setSenderUserId(messageBroadcast.getSenderUserId());
+        messageQueue.setSenderAgentId(messageBroadcast.getSenderAgentId());
+        messageQueue.setSenderClientId(messageBroadcast.getSenderClientId());
+        messageQueue.setBrand(messageBroadcast.getBrand());
+        messageQueue.setTargetUserId(targetUserId);
+        messageQueue.setMessageType(messageBroadcast.getMessageType());
+        messageQueue.setMessageStatus(messageBroadcast.getMessageStatus());
+        messageQueue.setExpireTime(messageBroadcast.getExpireTime());
+        messageQueue.setSeq(messageBroadcast.getSeq());
+
+        return messageQueue;
+    }
+
+    public static List<MessageQueue> messageBroadCast2MessageQueue(List<MessageBroadcast> messageBroadcastList, Long targetUserId){
+        return messageBroadcastList.stream().map(m -> {return messageBroadCast2MessageQueue(m, targetUserId);}).collect(
             Collectors.toList());
     }
 }

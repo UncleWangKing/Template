@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.zdpang.template.bean.MessageVo;
-import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -67,11 +66,6 @@ public class MessageBroadcast extends Model<MessageBroadcast> {
 
     private Date expireTime;
 
-    /**
-     * 消息体
-     */
-    private Long payloadId;
-
     private Long seq;
 
 
@@ -99,7 +93,7 @@ public class MessageBroadcast extends Model<MessageBroadcast> {
             Collectors.toList());
     }
 
-    public static MessageBroadcast messageQueu2MessageBroadCast(MessageQueue messageVo){
+    public static MessageBroadcast messageQueue2MessageBroadCast(MessageQueue messageVo){
         MessageBroadcast messageQueue = new MessageBroadcast();
         messageQueue.setSenderUserId(messageVo.getSenderUserId());
         messageQueue.setSenderAgentId(messageVo.getSenderAgentId());
@@ -109,13 +103,12 @@ public class MessageBroadcast extends Model<MessageBroadcast> {
         messageQueue.setMessageType(messageVo.getMessageType());
         messageQueue.setMessageStatus(messageVo.getMessageStatus());
         messageQueue.setExpireTime(messageVo.getExpireTime());
-        messageQueue.setSeq(messageVo.getSeq());
 
         return messageQueue;
     }
 
-    public static List<MessageBroadcast> messageQueu2MessageBroadCast(List<MessageQueue> messageVoList){
-        return messageVoList.stream().map(MessageBroadcast::messageQueu2MessageBroadCast).collect(
+    public static List<MessageBroadcast> messageQueue2MessageBroadCast(List<MessageQueue> messageVoList){
+        return messageVoList.stream().map(MessageBroadcast::messageQueue2MessageBroadCast).collect(
             Collectors.toList());
     }
 }
