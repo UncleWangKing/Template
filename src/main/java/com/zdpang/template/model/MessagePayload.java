@@ -32,6 +32,8 @@ public class MessagePayload extends Model<MessagePayload> {
 
     private String payload;
 
+    private String uniqueInfo;
+
     @Override
     protected Serializable pkVal() {
         return this.id;
@@ -40,6 +42,7 @@ public class MessagePayload extends Model<MessagePayload> {
     public static MessagePayload messageVo2MessagePayload(MessageVo messageVo){
         MessagePayload messagePayload = new MessagePayload();
         messagePayload.setPayload(messageVo.getPayload());
+        messagePayload.setUniqueInfo(messageVo.getUniqueInfo());
 
         return messagePayload;
     }

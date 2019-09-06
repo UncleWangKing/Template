@@ -30,4 +30,6 @@ public class MessageVo {
   private Date expireTime;
   @ApiModelProperty(value = "消息体")
   private String payload;
+  @ApiModelProperty(value = "幂等效验")
+  private String uniqueInfo;
 }
