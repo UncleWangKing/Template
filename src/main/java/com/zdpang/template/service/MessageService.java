@@ -75,9 +75,9 @@ public class MessageService {
      */
     QueryWrapper<MessageUser> messageUserQueryWrapper = new QueryWrapper<>();
     messageUserQueryWrapper.eq("user_id", userId);
-    MessageUser one = messageUserService.getOne(messageUserQueryWrapper);
-    if(null == one){
-      one = MessageUser.generateMessageUser(userId);
+    MessageUser messageUser = messageUserService.getOne(messageUserQueryWrapper);
+    if(null == messageUser){
+      messageUser = MessageUser.generateMessageUser(userId);
     }
     /**
      * 广播拆分
@@ -86,14 +86,14 @@ public class MessageService {
     maxSeqWrapper.select("MAX(seq) as maxSeq").eq("brand", brand);
     Map<String, Object> map = messageBroadcastService.getMap(maxSeqWrapper);
     Long maxSeq = (Long) map.get("maxSeq");
-    if(null != maxSeq && maxSeq > one.getSplitSeq()){
+    if(null != maxSeq && maxSeq > messageUser.getSplitSeq()){
       QueryWrapper<MessageBroadcast> broadcastQueryWrapper = new QueryWrapper<>();
-      broadcastQueryWrapper.gt("seq", one.getSplitSeq());
+      broadcastQueryWrapper.gt("seq", messageUser.getSplitSeq());
       List<MessageBroadcast> broadCastList = messageBroadcastService.list(broadcastQueryWrapper);
       List<MessageQueue> messageQueueList = MessageQueue.messageBroadCast2MessageQueue(broadCastList, userId);
       messageQueueService.saveBatch(messageQueueList);
-      one.setSplitSeq(maxSeq);
-      messageUserService.saveOrUpdate(one);
+      messageUser.setSplitSeq(maxSeq);
+      messageUserService.saveOrUpdate(messageUser);
     }
 
     /**
