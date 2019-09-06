@@ -93,22 +93,23 @@ public class MessageBroadcast extends Model<MessageBroadcast> {
             Collectors.toList());
     }
 
-    public static MessageBroadcast messageQueue2MessageBroadCast(MessageQueue messageVo){
-        MessageBroadcast messageQueue = new MessageBroadcast();
-        messageQueue.setSenderUserId(messageVo.getSenderUserId());
-        messageQueue.setSenderAgentId(messageVo.getSenderAgentId());
-        messageQueue.setSenderClientId(messageVo.getSenderClientId());
-        messageQueue.setBrand(messageVo.getBrand());
-        messageQueue.setTargetUserId(messageVo.getTargetUserId());
-        messageQueue.setMessageType(messageVo.getMessageType());
-        messageQueue.setMessageStatus(messageVo.getMessageStatus());
-        messageQueue.setExpireTime(messageVo.getExpireTime());
+    public static MessageBroadcast messageQueue2MessageBroadCast(MessageQueue messageQueue){
+        MessageBroadcast messageBroadcast = new MessageBroadcast();
+        messageBroadcast.setSenderUserId(messageQueue.getSenderUserId());
+        messageBroadcast.setSenderAgentId(messageQueue.getSenderAgentId());
+        messageBroadcast.setSenderClientId(messageQueue.getSenderClientId());
+        messageBroadcast.setBrand(messageQueue.getBrand());
+        messageBroadcast.setTargetUserId(messageQueue.getTargetUserId());
+        messageBroadcast.setMessageType(messageQueue.getMessageType());
+        messageBroadcast.setMessageStatus(messageQueue.getMessageStatus());
+        messageBroadcast.setExpireTime(messageQueue.getExpireTime());
+        messageBroadcast.setSeq(messageQueue.getSeq());
 
-        return messageQueue;
+        return messageBroadcast;
     }
 
-    public static List<MessageBroadcast> messageQueue2MessageBroadCast(List<MessageQueue> messageVoList){
-        return messageVoList.stream().map(MessageBroadcast::messageQueue2MessageBroadCast).collect(
+    public static List<MessageBroadcast> messageQueue2MessageBroadCast(List<MessageQueue> messageQueueList){
+        return messageQueueList.stream().map(MessageBroadcast::messageQueue2MessageBroadCast).collect(
             Collectors.toList());
     }
 }
