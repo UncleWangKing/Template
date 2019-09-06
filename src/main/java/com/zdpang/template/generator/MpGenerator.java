@@ -44,7 +44,7 @@ public class MpGenerator {
         /**
          * 只需修改表名
          */
-        .setInclude("message_queue"); // 需要生成的表
+        .setInclude("message_broadcast"); // 需要生成的表
         mpg.setStrategy(strategy);
 
         // 包配置

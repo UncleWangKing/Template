@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sun.org.apache.regexp.internal.RE;
 import com.zdpang.template.bean.MessageVo;
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -21,12 +19,12 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zdpang
- * @since 2019-08-30
+ * @since 2019-09-06
  */
-@TableName("message_queue")
+@TableName("message_broadcast")
 @Data
 @Accessors(chain = true)
-public class MessageQueue extends Model<MessageQueue> {
+public class MessageBroadcast extends Model<MessageBroadcast> {
 
     private static final long serialVersionUID = 1L;
 
@@ -61,16 +59,14 @@ public class MessageQueue extends Model<MessageQueue> {
      * 0 正常 1 已删除
      */
     private Integer messageStatus;
+
     /**
      * 创建时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",locale = "zh", timezone="GMT+8")
     private Date createTime;
-    /**
-     * 过期时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",locale = "zh", timezone="GMT+8")
+
     private Date expireTime;
+
     /**
      * 消息体
      */
@@ -84,8 +80,8 @@ public class MessageQueue extends Model<MessageQueue> {
         return this.id;
     }
 
-    public static MessageQueue messageVo2MessageQueue(MessageVo messageVo){
-        MessageQueue messageQueue = new MessageQueue();
+    public static MessageBroadcast messageVo2MessageBroadCast(MessageVo messageVo){
+        MessageBroadcast messageQueue = new MessageBroadcast();
         messageQueue.setSenderUserId(messageVo.getSenderUserId());
         messageQueue.setSenderAgentId(messageVo.getSenderAgentId());
         messageQueue.setSenderClientId(messageVo.getSenderClientId());
@@ -98,8 +94,28 @@ public class MessageQueue extends Model<MessageQueue> {
         return messageQueue;
     }
 
-    public static List<MessageQueue> messageVo2MessageQueue(List<MessageVo> messageVoList){
-        return messageVoList.stream().map(MessageQueue::messageVo2MessageQueue).collect(
+    public static List<MessageBroadcast> messageVo2MessageBroadCast(List<MessageVo> messageVoList){
+        return messageVoList.stream().map(MessageBroadcast::messageVo2MessageBroadCast).collect(
+            Collectors.toList());
+    }
+
+    public static MessageBroadcast messageQueu2MessageBroadCast(MessageQueue messageVo){
+        MessageBroadcast messageQueue = new MessageBroadcast();
+        messageQueue.setSenderUserId(messageVo.getSenderUserId());
+        messageQueue.setSenderAgentId(messageVo.getSenderAgentId());
+        messageQueue.setSenderClientId(messageVo.getSenderClientId());
+        messageQueue.setBrand(messageVo.getBrand());
+        messageQueue.setTargetUserId(messageVo.getTargetUserId());
+        messageQueue.setMessageType(messageVo.getMessageType());
+        messageQueue.setMessageStatus(messageVo.getMessageStatus());
+        messageQueue.setExpireTime(messageVo.getExpireTime());
+        messageQueue.setSeq(messageVo.getSeq());
+
+        return messageQueue;
+    }
+
+    public static List<MessageBroadcast> messageQueu2MessageBroadCast(List<MessageQueue> messageVoList){
+        return messageVoList.stream().map(MessageBroadcast::messageQueu2MessageBroadCast).collect(
             Collectors.toList());
     }
 }

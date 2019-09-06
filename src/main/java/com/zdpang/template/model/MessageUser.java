@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.zdpang.template.bean.MessageVo;
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -42,5 +45,14 @@ public class MessageUser extends Model<MessageUser> {
     @Override
     protected Serializable pkVal() {
         return this.id;
+    }
+
+    public static MessageUser generateMessageUser(Long userId){
+        MessageUser messageUser = new MessageUser();
+        messageUser.setUserId(userId);
+        messageUser.setPushedSeq(0L);
+        messageUser.setSplitSeq(0L);
+
+        return messageUser;
     }
 }
