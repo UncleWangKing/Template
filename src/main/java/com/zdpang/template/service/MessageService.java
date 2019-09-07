@@ -142,15 +142,16 @@ public class MessageService {
     return messageQueueService.update(messageQueue, queueQueryWrapper);
   }
 
-  public Boolean adminUpdateStatus(Long messageId, Long seq, Integer status, String brand){
+  public Boolean adminUpdateStatus(Long seq, Integer status, String brand){
     /**
      * 广播消息体
      */
     Assert.isTrue(Constants.MessageStatus.containts(status), "未知状态");
     MessageBroadcast messageBroadcast = new MessageBroadcast();
-    messageBroadcast.setId(messageId);
     messageBroadcast.setMessageStatus(status);
-    messageBroadcastService.updateById(messageBroadcast);
+    QueryWrapper<MessageBroadcast> broadcastQueryWrapper = new QueryWrapper<>();
+    broadcastQueryWrapper.eq("seq", seq);
+    messageBroadcastService.update(messageBroadcast, broadcastQueryWrapper);
     /**
      * 拆分消息体
      */

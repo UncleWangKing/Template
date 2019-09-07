@@ -48,9 +48,9 @@ public class MessageController {
   }
 
   @PostMapping(value="/admin/update/status")
-  ResponseBean adminUpdateStatus(Long messageId, Long seq, Integer status, String brand) throws Exception {
+  ResponseBean adminUpdateStatus(Long seq, Integer status, String brand) throws Exception {
 
 
-    return new ResponseBean().success(messageService.adminUpdateStatus(messageId, seq, status, brand));
+    return new ResponseBean().success(messageService.adminUpdateStatus(seq, status, brand));
   }
 }
