@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.zdpang.template.bean.MessageVo;
 import java.io.Serializable;
 import java.util.Date;
@@ -63,8 +64,11 @@ public class MessageBroadcast extends Model<MessageBroadcast> {
      * 创建时间
      */
     private Date createTime;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",locale = "zh", timezone="GMT+8")
     private Date expireTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",locale = "zh", timezone="GMT+8")
+    private Date sendTime;
 
     private Long seq;
 
@@ -84,6 +88,7 @@ public class MessageBroadcast extends Model<MessageBroadcast> {
         messageQueue.setMessageType(messageVo.getMessageType());
         messageQueue.setMessageStatus(messageVo.getMessageStatus());
         messageQueue.setExpireTime(messageVo.getExpireTime());
+        messageQueue.setSendTime(messageVo.getSendTime());
 
         return messageQueue;
     }
@@ -104,6 +109,7 @@ public class MessageBroadcast extends Model<MessageBroadcast> {
         messageBroadcast.setMessageStatus(messageQueue.getMessageStatus());
         messageBroadcast.setExpireTime(messageQueue.getExpireTime());
         messageBroadcast.setSeq(messageQueue.getSeq());
+        messageBroadcast.setSendTime(messageQueue.getSendTime());
 
         return messageBroadcast;
     }

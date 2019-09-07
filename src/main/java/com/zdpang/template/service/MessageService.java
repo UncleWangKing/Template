@@ -77,8 +77,9 @@ public class MessageService {
     /**
      * 消息读取
      */
+    Date date = new Date();
     QueryWrapper<MessageQueue> messageQueueQueryWrapper = new QueryWrapper<>();
-    messageQueueQueryWrapper.eq("target_user_id", userId).eq("brand", brand).ge("expire_time", new Date()).orderByDesc("seq");
+    messageQueueQueryWrapper.eq("target_user_id", userId).eq("brand", brand).ge("expire_time", date).le("send_time", date).orderByDesc("send_time");
     List<MessageQueue> messageQueueList = messageQueueService.list(messageQueueQueryWrapper);
 
     if(! CollectionUtils.isEmpty(messageQueueList)) {

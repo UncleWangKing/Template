@@ -32,4 +32,7 @@ public class MessageVo {
   private String payload;
   @ApiModelProperty(value = "幂等效验")
   private String uniqueInfo;
+  @ApiModelProperty(value = "发送时间")
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",locale = "zh", timezone="GMT+8")
+  private Date sendTime;
 }

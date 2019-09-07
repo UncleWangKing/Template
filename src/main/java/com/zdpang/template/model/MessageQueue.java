@@ -74,6 +74,8 @@ public class MessageQueue extends Model<MessageQueue> {
     private Date expireTime;
 
     private Long seq;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",locale = "zh", timezone="GMT+8")
+    private Date sendTime;
 
     @TableField(exist = false)
     private String payLoad;
@@ -94,6 +96,7 @@ public class MessageQueue extends Model<MessageQueue> {
         messageQueue.setMessageType(messageVo.getMessageType());
         messageQueue.setMessageStatus(messageVo.getMessageStatus());
         messageQueue.setExpireTime(messageVo.getExpireTime());
+        messageQueue.setSendTime(messageVo.getSendTime());
 
         return messageQueue;
     }
@@ -114,6 +117,7 @@ public class MessageQueue extends Model<MessageQueue> {
         messageQueue.setMessageStatus(messageBroadcast.getMessageStatus());
         messageQueue.setExpireTime(messageBroadcast.getExpireTime());
         messageQueue.setSeq(messageBroadcast.getSeq());
+        messageQueue.setSendTime(messageBroadcast.getSendTime());
 
         return messageQueue;
     }
