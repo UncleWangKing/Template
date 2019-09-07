@@ -130,13 +130,14 @@ public class MessageService {
     }
   }
 
-  public Boolean updateStatus(Long messageId, Integer status, String brand, Long userId){
+  public Boolean updateStatus(Long seq, Integer status, String brand, Long userId){
     Assert.isTrue(Constants.MessageStatus.containts(status), "未知状态");
     splitBroadCast(userId, brand);
     MessageQueue messageQueue = new MessageQueue();
-    messageQueue.setId(messageId);
     messageQueue.setMessageStatus(status);
+    QueryWrapper<MessageQueue> queueQueryWrapper = new QueryWrapper<>();
+    queueQueryWrapper.eq("target_user_id", userId).eq("seq", seq);
 
-    return messageQueueService.updateById(messageQueue);
+    return messageQueueService.update(messageQueue, queueQueryWrapper);
   }
 }

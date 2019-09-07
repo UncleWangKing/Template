@@ -41,9 +41,9 @@ public class MessageController {
   }
 
   @PostMapping(value="/update/status")
-  ResponseBean updateStatus(Long messageId, Integer status, String brand, Long userId) throws Exception {
+  ResponseBean updateStatus(Long seq, Integer status, String brand, Long userId) throws Exception {
 
 
-    return new ResponseBean().success(messageService.updateStatus(messageId, status, brand, userId));
+    return new ResponseBean().success(messageService.updateStatus(seq, status, brand, userId));
   }
 }
