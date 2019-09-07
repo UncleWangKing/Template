@@ -6,6 +6,7 @@ import com.zdpang.template.model.MessageBroadcast;
 import com.zdpang.template.model.MessagePayload;
 import com.zdpang.template.model.MessageQueue;
 import com.zdpang.template.model.MessageUser;
+import com.zdpang.template.util.Constants;
 import com.zdpang.template.util.Constants.MessageType;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +17,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 @Service
@@ -70,32 +72,7 @@ public class MessageService {
   }
 
   public List<MessageQueue> getMessage(Long userId, String brand, Long clientId, Integer pageSize, Integer pageNum){
-    /**
-     * 读取用户广播拆分情况
-     */
-    QueryWrapper<MessageUser> messageUserQueryWrapper = new QueryWrapper<>();
-    messageUserQueryWrapper.eq("user_id", userId);
-    MessageUser messageUser = messageUserService.getOne(messageUserQueryWrapper);
-    if(null == messageUser){
-      messageUser = MessageUser.generateMessageUser(userId);
-    }
-    /**
-     * 广播拆分
-     */
-    QueryWrapper<MessageBroadcast> maxSeqWrapper = new QueryWrapper<>();
-    maxSeqWrapper.select("MAX(seq) as maxSeq").eq("brand", brand);
-    Map<String, Object> map = messageBroadcastService.getMap(maxSeqWrapper);
-    Long maxSeq = (Long) map.get("maxSeq");
-    if(null != maxSeq && maxSeq > messageUser.getSplitSeq()){
-      QueryWrapper<MessageBroadcast> broadcastQueryWrapper = new QueryWrapper<>();
-      broadcastQueryWrapper.gt("seq", messageUser.getSplitSeq());
-      List<MessageBroadcast> broadCastList = messageBroadcastService.list(broadcastQueryWrapper);
-      List<MessageQueue> messageQueueList = MessageQueue.messageBroadCast2MessageQueue(broadCastList, userId);
-      messageQueueService.saveBatch(messageQueueList);
-      messageUser.setSplitSeq(maxSeq);
-      messageUserService.saveOrUpdate(messageUser);
-    }
-
+    splitBroadCast(userId, brand);
     /**
      * 消息读取
      */
@@ -123,5 +100,43 @@ public class MessageService {
 
     }
     return messageQueueList;
+  }
+
+  private void splitBroadCast(Long userId, String brand){
+    /**
+     * 读取用户广播拆分情况
+     */
+    QueryWrapper<MessageUser> messageUserQueryWrapper = new QueryWrapper<>();
+    messageUserQueryWrapper.eq("user_id", userId);
+    MessageUser messageUser = messageUserService.getOne(messageUserQueryWrapper);
+    if(null == messageUser){
+      messageUser = MessageUser.generateMessageUser(userId);
+    }
+    /**
+     * 广播拆分
+     */
+    QueryWrapper<MessageBroadcast> maxSeqWrapper = new QueryWrapper<>();
+    maxSeqWrapper.select("MAX(seq) as maxSeq").eq("brand", brand);
+    Map<String, Object> map = messageBroadcastService.getMap(maxSeqWrapper);
+    Long maxSeq = (Long) map.get("maxSeq");
+    if(null != maxSeq && maxSeq > messageUser.getSplitSeq()){
+      QueryWrapper<MessageBroadcast> broadcastQueryWrapper = new QueryWrapper<>();
+      broadcastQueryWrapper.gt("seq", messageUser.getSplitSeq());
+      List<MessageBroadcast> broadCastList = messageBroadcastService.list(broadcastQueryWrapper);
+      List<MessageQueue> messageQueueList = MessageQueue.messageBroadCast2MessageQueue(broadCastList, userId);
+      messageQueueService.saveBatch(messageQueueList);
+      messageUser.setSplitSeq(maxSeq);
+      messageUserService.saveOrUpdate(messageUser);
+    }
+  }
+
+  public Boolean updateStatus(Long messageId, Integer status, String brand, Long userId){
+    Assert.isTrue(Constants.MessageStatus.containts(status), "未知状态");
+    splitBroadCast(userId, brand);
+    MessageQueue messageQueue = new MessageQueue();
+    messageQueue.setId(messageId);
+    messageQueue.setMessageStatus(status);
+
+    return messageQueueService.updateById(messageQueue);
   }
 }

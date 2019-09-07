@@ -27,16 +27,23 @@ public class MessageController {
   private MessageService messageService;
 
   @PostMapping(value="/send")
-  ResponseBean batchInsert(@RequestBody MessageVo messageVo) throws Exception {
+  ResponseBean sendMessage(@RequestBody MessageVo messageVo) throws Exception {
 
 
     return new ResponseBean().success(messageService.saveMessage(Arrays.asList(messageVo)));
   }
 
   @GetMapping(value="/get")
-  ResponseBean batchInsert(Long userId, String brand, Long clientId, Integer pageSize, Integer pageNum) throws Exception {
+  ResponseBean getMessage(Long userId, String brand, Long clientId, Integer pageSize, Integer pageNum) throws Exception {
 
 
     return new ResponseBean().success(messageService.getMessage(userId, brand, clientId, pageSize, pageNum));
+  }
+
+  @PostMapping(value="/update/status")
+  ResponseBean updateStatus(Long messageId, Integer status, String brand, Long userId) throws Exception {
+
+
+    return new ResponseBean().success(messageService.updateStatus(messageId, status, brand, userId));
   }
 }
