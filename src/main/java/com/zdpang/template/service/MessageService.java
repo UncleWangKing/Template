@@ -7,6 +7,7 @@ import com.zdpang.template.model.MessagePayload;
 import com.zdpang.template.model.MessageQueue;
 import com.zdpang.template.model.MessageUser;
 import com.zdpang.template.util.Constants;
+import com.zdpang.template.util.Constants.MessageStatus;
 import com.zdpang.template.util.Constants.MessageType;
 import java.util.ArrayList;
 import java.util.Date;
@@ -121,7 +122,7 @@ public class MessageService {
     Long maxSeq = (Long) map.get("maxSeq");
     if(null != maxSeq && maxSeq > messageUser.getSplitSeq()){
       QueryWrapper<MessageBroadcast> broadcastQueryWrapper = new QueryWrapper<>();
-      broadcastQueryWrapper.gt("seq", messageUser.getSplitSeq());
+      broadcastQueryWrapper.gt("seq", messageUser.getSplitSeq()).lt("message_status", MessageStatus.CLIENT_DELETE.getVal());
       List<MessageBroadcast> broadCastList = messageBroadcastService.list(broadcastQueryWrapper);
       List<MessageQueue> messageQueueList = MessageQueue.messageBroadCast2MessageQueue(broadCastList, userId);
       messageQueueService.saveBatch(messageQueueList);
@@ -130,7 +131,7 @@ public class MessageService {
     }
   }
 
-  public Boolean updateStatus(Long seq, Integer status, String brand, Long userId){
+  public Boolean clientUpdateStatus(Long seq, Integer status, String brand, Long userId){
     Assert.isTrue(Constants.MessageStatus.containts(status), "未知状态");
     splitBroadCast(userId, brand);
     MessageQueue messageQueue = new MessageQueue();
@@ -139,5 +140,26 @@ public class MessageService {
     queueQueryWrapper.eq("target_user_id", userId).eq("seq", seq);
 
     return messageQueueService.update(messageQueue, queueQueryWrapper);
+  }
+
+  public Boolean adminUpdateStatus(Long messageId, Long seq, Integer status, String brand){
+    /**
+     * 广播消息体
+     */
+    Assert.isTrue(Constants.MessageStatus.containts(status), "未知状态");
+    MessageBroadcast messageBroadcast = new MessageBroadcast();
+    messageBroadcast.setId(messageId);
+    messageBroadcast.setMessageStatus(status);
+    messageBroadcastService.updateById(messageBroadcast);
+    /**
+     * 拆分消息体
+     */
+    MessageQueue messageQueue = new MessageQueue();
+    messageQueue.setMessageStatus(status);
+    QueryWrapper<MessageQueue> queueQueryWrapper = new QueryWrapper<>();
+    queueQueryWrapper.eq("seq", seq);
+    messageQueueService.update(messageQueue, queueQueryWrapper);
+
+    return true;
   }
 }

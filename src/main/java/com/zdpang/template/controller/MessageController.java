@@ -40,10 +40,17 @@ public class MessageController {
     return new ResponseBean().success(messageService.getMessage(userId, brand, clientId, pageSize, pageNum));
   }
 
-  @PostMapping(value="/update/status")
-  ResponseBean updateStatus(Long seq, Integer status, String brand, Long userId) throws Exception {
+  @PostMapping(value="/client/update/status")
+  ResponseBean clientUpdateStatus(Long seq, Integer status, String brand, Long userId) throws Exception {
 
 
-    return new ResponseBean().success(messageService.updateStatus(seq, status, brand, userId));
+    return new ResponseBean().success(messageService.clientUpdateStatus(seq, status, brand, userId));
+  }
+
+  @PostMapping(value="/admin/update/status")
+  ResponseBean adminUpdateStatus(Long messageId, Long seq, Integer status, String brand) throws Exception {
+
+
+    return new ResponseBean().success(messageService.adminUpdateStatus(messageId, seq, status, brand));
   }
 }
