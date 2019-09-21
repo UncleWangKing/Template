@@ -35,4 +35,6 @@ public class MessageVo {
   @ApiModelProperty(value = "发送时间")
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",locale = "zh", timezone="GMT+8")
   private Date sendTime;
+  @ApiModelProperty(value = "用户类型0 玩家 1管理员")
+  private Integer targetUserType;
 }

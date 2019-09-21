@@ -72,6 +72,8 @@ public class MessageBroadcast extends Model<MessageBroadcast> {
 
     private Long seq;
 
+    private Integer targetUserType;
+
 
     @Override
     protected Serializable pkVal() {
@@ -89,6 +91,7 @@ public class MessageBroadcast extends Model<MessageBroadcast> {
         messageQueue.setMessageStatus(messageVo.getMessageStatus());
         messageQueue.setExpireTime(messageVo.getExpireTime());
         messageQueue.setSendTime(messageVo.getSendTime());
+        messageQueue.setTargetUserType(messageVo.getTargetUserType());
 
         return messageQueue;
     }
@@ -110,6 +113,7 @@ public class MessageBroadcast extends Model<MessageBroadcast> {
         messageBroadcast.setExpireTime(messageQueue.getExpireTime());
         messageBroadcast.setSeq(messageQueue.getSeq());
         messageBroadcast.setSendTime(messageQueue.getSendTime());
+        messageBroadcast.setTargetUserType(messageQueue.getTargetUserType());
 
         return messageBroadcast;
     }

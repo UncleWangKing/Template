@@ -7,6 +7,7 @@ import com.zdpang.template.service.MessageQueueService;
 import com.zdpang.template.service.MessageService;
 import com.zdpang.template.service.MessageUserService;
 import java.util.Arrays;
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,14 +31,14 @@ public class MessageController {
   ResponseBean sendMessage(@RequestBody MessageVo messageVo) throws Exception {
 
 
-    return new ResponseBean().success(messageService.saveMessage(Arrays.asList(messageVo)));
+    return new ResponseBean().success(messageService.saveMessage(Collections.singletonList(messageVo)));
   }
 
   @GetMapping(value="/get")
-  ResponseBean getMessage(Long userId, String brand, Long clientId, Integer pageSize, Integer pageNum) throws Exception {
+  ResponseBean getMessage(Long userId, String brand, Long clientId, Integer targetUserType, Integer pageSize, Integer pageNum) throws Exception {
 
 
-    return new ResponseBean().success(messageService.getMessage(userId, brand, clientId, pageSize, pageNum));
+    return new ResponseBean().success(messageService.getMessage(userId, brand, clientId, targetUserType, pageSize, pageNum));
   }
 
   @PostMapping(value="/client/update/status")

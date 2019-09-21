@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sun.org.apache.regexp.internal.RE;
 import com.zdpang.template.bean.MessageVo;
-import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -80,6 +78,8 @@ public class MessageQueue extends Model<MessageQueue> {
     @TableField(exist = false)
     private String payLoad;
 
+    private Integer targetUserType;
+
 
     @Override
     protected Serializable pkVal() {
@@ -97,6 +97,7 @@ public class MessageQueue extends Model<MessageQueue> {
         messageQueue.setMessageStatus(messageVo.getMessageStatus());
         messageQueue.setExpireTime(messageVo.getExpireTime());
         messageQueue.setSendTime(messageVo.getSendTime());
+        messageQueue.setTargetUserType(messageVo.getTargetUserType());
 
         return messageQueue;
     }
@@ -118,6 +119,7 @@ public class MessageQueue extends Model<MessageQueue> {
         messageQueue.setExpireTime(messageBroadcast.getExpireTime());
         messageQueue.setSeq(messageBroadcast.getSeq());
         messageQueue.setSendTime(messageBroadcast.getSendTime());
+        messageQueue.setTargetUserType(messageBroadcast.getTargetUserType());
 
         return messageQueue;
     }

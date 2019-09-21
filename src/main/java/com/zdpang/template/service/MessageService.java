@@ -72,14 +72,14 @@ public class MessageService {
     return true;
   }
 
-  public List<MessageQueue> getMessage(Long userId, String brand, Long clientId, Integer pageSize, Integer pageNum){
+  public List<MessageQueue> getMessage(Long userId, String brand, Long clientId, Integer targetUserType, Integer pageSize, Integer pageNum){
     splitBroadCast(userId, brand);
     /**
      * 消息读取
      */
     Date date = new Date();
     QueryWrapper<MessageQueue> messageQueueQueryWrapper = new QueryWrapper<>();
-    messageQueueQueryWrapper.eq("target_user_id", userId).eq("brand", brand).ge("expire_time", date).le("send_time", date).orderByDesc("send_time");
+    messageQueueQueryWrapper.eq("target_user_id", userId).eq("brand", brand).eq("target_user_type", targetUserType).ge("expire_time", date).le("send_time", date).orderByDesc("send_time");
     List<MessageQueue> messageQueueList = messageQueueService.list(messageQueueQueryWrapper);
 
     if(! CollectionUtils.isEmpty(messageQueueList)) {
@@ -120,6 +120,12 @@ public class MessageService {
     QueryWrapper<MessageBroadcast> maxSeqWrapper = new QueryWrapper<>();
     maxSeqWrapper.select("MAX(seq) as maxSeq").eq("brand", brand);
     Map<String, Object> map = messageBroadcastService.getMap(maxSeqWrapper);
+    /**
+     * 无消息无需继续继续拆分
+     */
+    if(null == map) {
+      return;
+    }
     Long maxSeq = (Long) map.get("maxSeq");
     if(null != maxSeq && maxSeq > messageUser.getSplitSeq()){
       QueryWrapper<MessageBroadcast> broadcastQueryWrapper = new QueryWrapper<>();
