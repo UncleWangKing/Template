@@ -34,24 +34,30 @@ public class MessageController {
     return new ResponseBean().success(messageService.saveMessage(Collections.singletonList(messageVo)));
   }
 
+  @PostMapping(value="/sendTest")
+  ResponseBean sendTest(@RequestBody MessageVo messageVo) throws Exception {
+
+    return new ResponseBean().success(messageService.saveTest(Collections.singletonList(messageVo)));
+  }
+
   @GetMapping(value="/get")
-  ResponseBean getMessage(Long userId, String brand, Long clientId, Integer targetUserType, Integer pageSize, Integer pageNum) throws Exception {
+  ResponseBean getMessage(Long userId, String brand, Integer targetUserType, Integer pageSize, Integer pageNum) throws Exception {
 
 
-    return new ResponseBean().success(messageService.getMessage(userId, brand, clientId, targetUserType, pageSize, pageNum));
+    return new ResponseBean().success(messageService.getMessage(userId, brand, targetUserType, pageSize, pageNum));
   }
 
-  @PostMapping(value="/client/update/status")
-  ResponseBean clientUpdateStatus(Long seq, Integer status, String brand, Long userId) throws Exception {
+  @PostMapping(value="/client/single/update/status")
+  ResponseBean clientUpdateStatus(Long seq, Integer status, String brand, Long userId, Integer targetUserType) throws Exception {
 
 
-    return new ResponseBean().success(messageService.clientUpdateStatus(seq, status, brand, userId));
+    return new ResponseBean().success(messageService.clientUpdateStatus(seq, status, brand, userId, targetUserType));
   }
 
-  @PostMapping(value="/admin/update/status")
-  ResponseBean adminUpdateStatus(Long seq, Integer status, String brand) throws Exception {
+  @PostMapping(value="/admin/broadcast/update/status")
+  ResponseBean adminUpdateStatus(Long seq, Integer status) throws Exception {
 
 
-    return new ResponseBean().success(messageService.adminUpdateStatus(seq, status, brand));
+    return new ResponseBean().success(messageService.adminUpdateStatus(seq, status));
   }
 }

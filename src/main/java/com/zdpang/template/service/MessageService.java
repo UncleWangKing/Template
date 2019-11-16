@@ -15,14 +15,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 @Service
-public class MessageService {
+public class MessageService implements ApplicationContextAware {
   @Autowired
   private MessageQueueService messageQueueService;
   @Autowired
@@ -31,6 +35,43 @@ public class MessageService {
   private MessageUserService messageUserService;
   @Autowired
   private MessageBroadcastService messageBroadcastService;
+
+  private static ApplicationContext applicationContext;
+
+  @Transactional
+  public boolean saveTest(List<MessageVo> messageVoList){
+    MessageService bean = applicationContext.getBean(MessageService.class);
+    bean.saveMessage1(messageVoList);
+    bean.saveMessage2(messageVoList);
+
+    return true;
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public boolean saveMessage1(List<MessageVo> messageVoList){
+    if(CollectionUtils.isEmpty(messageVoList)) {
+      return true;
+    }
+    List<MessagePayload> messagePayLoadList = MessagePayload.messageVo2MessageQueue(messageVoList);
+    messagePayloadService.saveBatch(messagePayLoadList);
+
+    return true;
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public boolean saveMessage2(List<MessageVo> messageVoList){
+    if(CollectionUtils.isEmpty(messageVoList)) {
+      return true;
+    }
+
+    List<MessagePayload> messagePayLoadList = MessagePayload.messageVo2MessageQueue(messageVoList);
+    messagePayloadService.saveBatch(messagePayLoadList);
+    if(true){
+      throw new RuntimeException("666");
+    }
+
+    return true;
+  }
 
   @Transactional
   public boolean saveMessage(List<MessageVo> messageVoList){
@@ -72,14 +113,14 @@ public class MessageService {
     return true;
   }
 
-  public List<MessageQueue> getMessage(Long userId, String brand, Long clientId, Integer targetUserType, Integer pageSize, Integer pageNum){
+  public List<MessageQueue> getMessage(Long userId, String brand, Integer targetUserType, Integer pageSize, Integer pageNum){
     splitBroadCast(userId, brand);
     /**
      * 消息读取
      */
     Date date = new Date();
     QueryWrapper<MessageQueue> messageQueueQueryWrapper = new QueryWrapper<>();
-    messageQueueQueryWrapper.eq("target_user_id", userId).eq("brand", brand).eq("target_user_type", targetUserType).ge("expire_time", date).le("send_time", date).orderByDesc("send_time");
+    messageQueueQueryWrapper.eq("target_user_id", userId).eq("brand", brand).eq("target_user_type", targetUserType).in("message_status", MessageStatus.UNREAD.getVal(), MessageStatus.READ.getVal()).ge("expire_time", date).le("send_time", date).orderByDesc("send_time");
     List<MessageQueue> messageQueueList = messageQueueService.list(messageQueueQueryWrapper);
 
     if(! CollectionUtils.isEmpty(messageQueueList)) {
@@ -104,7 +145,8 @@ public class MessageService {
     return messageQueueList;
   }
 
-  private void splitBroadCast(Long userId, String brand){
+  @Transactional
+  void splitBroadCast(Long userId, String brand){
     /**
      * 读取用户广播拆分情况
      */
@@ -127,29 +169,31 @@ public class MessageService {
       return;
     }
     Long maxSeq = (Long) map.get("maxSeq");
-    if(null != maxSeq && maxSeq > messageUser.getSplitSeq()){
-      QueryWrapper<MessageBroadcast> broadcastQueryWrapper = new QueryWrapper<>();
-      broadcastQueryWrapper.gt("seq", messageUser.getSplitSeq()).lt("message_status", MessageStatus.CLIENT_DELETE.getVal());
-      List<MessageBroadcast> broadCastList = messageBroadcastService.list(broadcastQueryWrapper);
-      List<MessageQueue> messageQueueList = MessageQueue.messageBroadCast2MessageQueue(broadCastList, userId);
-      messageQueueService.saveBatch(messageQueueList);
-      messageUser.setSplitSeq(maxSeq);
-      messageUserService.saveOrUpdate(messageUser);
+    if(null == maxSeq || maxSeq <= messageUser.getSplitSeq()){
+      return;
     }
+
+    QueryWrapper<MessageBroadcast> broadcastQueryWrapper = new QueryWrapper<>();
+    broadcastQueryWrapper.gt("seq", messageUser.getSplitSeq()).lt("message_status", MessageStatus.CLIENT_DELETE.getVal());
+    List<MessageBroadcast> broadCastList = messageBroadcastService.list(broadcastQueryWrapper);
+    List<MessageQueue> messageQueueList = MessageQueue.messageBroadCast2MessageQueue(broadCastList, userId);
+    messageQueueService.saveBatch(messageQueueList);
+    messageUser.setSplitSeq(maxSeq);
+    messageUserService.saveOrUpdate(messageUser);
   }
 
-  public Boolean clientUpdateStatus(Long seq, Integer status, String brand, Long userId){
+  public Boolean clientUpdateStatus(Long seq, Integer status, String brand, Long userId, Integer targetUserType){
     Assert.isTrue(Constants.MessageStatus.containts(status), "未知状态");
     splitBroadCast(userId, brand);
     MessageQueue messageQueue = new MessageQueue();
     messageQueue.setMessageStatus(status);
     QueryWrapper<MessageQueue> queueQueryWrapper = new QueryWrapper<>();
-    queueQueryWrapper.eq("target_user_id", userId).eq("seq", seq);
+    queueQueryWrapper.eq("brand", brand).eq("target_user_id", userId).eq("seq", seq).eq("target_user_type", targetUserType);
 
     return messageQueueService.update(messageQueue, queueQueryWrapper);
   }
 
-  public Boolean adminUpdateStatus(Long seq, Integer status, String brand){
+  public Boolean adminUpdateStatus(Long seq, Integer status){
     /**
      * 广播消息体
      */
@@ -169,5 +213,10 @@ public class MessageService {
     messageQueueService.update(messageQueue, queueQueryWrapper);
 
     return true;
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
   }
 }
